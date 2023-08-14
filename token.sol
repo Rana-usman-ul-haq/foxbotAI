@@ -132,7 +132,7 @@ contract FoxbotAI is Context, IERC20, Ownable {
 
     IUniswapV2Router02 private uniswapV2Router;
     address private uniswapV2Pair;
-    bool private tradingOpen = true;
+    bool private tradingOpen = false;
     bool private inSwap = false;
     bool private swapEnabled = true;
 
@@ -216,6 +216,7 @@ contract FoxbotAI is Context, IERC20, Ownable {
         if (from != owner() && to != owner()) {
             require(!bots[from] && !bots[to]);
             require(amount <= _maxTxAmount, "Exceeds the _maxTxAmount.");
+            require(tradingOpen, "Trading not opened");
 
             if(to != uniswapV2Pair) {
                 require(balanceOf(to) + amount <= _maxWalletSize, "Exceeds the maxWalletSize.");
@@ -322,6 +323,10 @@ contract FoxbotAI is Context, IERC20, Ownable {
     function setTaxes(uint256 buyFee, uint256 sellFee) public onlyOwner {
         _buyTax = buyFee;
         _sellTax = sellFee;
+    }
+
+    function openTrading() public onlyOwner {
+        tradingOpen = true;
     }
     
     }
